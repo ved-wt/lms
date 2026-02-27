@@ -1,0 +1,41 @@
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@import "bootstrap/dist/css/bootstrap.min.css";
+/*@import "@angular/material/prebuilt-themes/indigo-pink.css";*/
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* src/styles.css */
+
+/* src/styles.css */
+:root {
+  /* LAYER 1: PRIMITIVES (Names based on the color itself) */
+  /*--color-pitch-black: #191308;
+  --color-mocha: #322a26;
+  --color-indigo: #454b66;
+  --color-glaucous: #677db7;
+  --color-wisteria: #9ca3db;
+*/
+  --gunmetal: #32373bff;
+  --iron-grey: #4a5859ff;
+  --almond-silk: #f4d6ccff;
+  --honey-bronze: #f4b860ff;
+  --blushed-brick: #c83e4dff;
+
+  --app-bg: var(--gunmetal);
+  --card-bg: var(--iron-grey);
+  --card-border: var(--almond-silk);
+
+  --text-main: #ffffff;
+  --text-muted: var(--almond-silk);
+
+  --action-primary: var(--honey-bronze);
+  --action-danger: var(--blushed-brick);
+
+  --brand-gradient: linear-gradient(135deg, var(--almond-silk), var(--iron-grey));
+}

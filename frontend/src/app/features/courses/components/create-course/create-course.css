@@ -1,0 +1,277 @@
+.create-page-wrapper {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  min-height: 100vh;
+  color: white;
+  font-family: "Inter", sans-serif;
+}
+
+.form-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.back-link {
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+.form-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0;
+}
+.form-header p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+
+.main-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  color: #38bdf8;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Custom Inputs to keep it clean */
+.full-width {
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-form-field {
+  --mdc-filled-textField-container-color: rgba(255, 255, 255, 0.03);
+  --mdc-outlined-textField-focus-outline-color: #38bdf8;
+  --mat-form-field-container-placeholder-color: rgba(255, 255, 255, 0.4);
+}
+
+::ng-deep .mat-mdc-text-field-wrapper input,
+/*::ng-deep .mat-mdc-text-field-wrapper textarea {
+  color: white !important;
+}*/
+
+/* Sections & Lessons */
+.section-wrapper {
+  margin-bottom: 2rem;
+  animation: slideUp 0.4s ease-out;
+}
+
+.section-card {
+  background: #f8fafc;
+  color: #1e293b;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+  background: #e2e8f0;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.index-badge {
+  background: #38bdf8;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.section-body {
+  padding: 1.5rem;
+}
+
+/* Nested Lesson Cards */
+.lessons-area {
+  margin-top: 1.5rem;
+  padding-left: 2rem;
+  border-left: 2px dashed #cbd5e1;
+}
+
+.lesson-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.lesson-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.mini-remove {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+}
+
+.custom-input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.add-lesson-btn {
+  color: #38bdf8 !important;
+  font-weight: 600 !important;
+}
+.custom-select {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  color: #1e293b;
+}
+
+.animation-container {
+  position: relative;
+  overflow: hidden; /* Clips the elements as they slide outside the card */
+  min-height: 150px; /* Adjust to match your content's expected height */
+  width: 100%;
+}
+
+.slide-item {
+  width: 100%;
+}
+
+.video-link-box {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 0 15px;
+  gap: 10px;
+}
+
+.video-link-box mat-icon {
+  color: #1f2937;
+}
+
+.video-field {
+  background: transparent;
+  border: none;
+  color: #111827;
+  padding: 12px 0;
+  width: 100%;
+  outline: none;
+}
+
+.video-field::placeholder {
+  color: #6b7280;
+}
+.modern-toggle {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: none !important;
+}
+
+::ng-deep .modern-toggle .mat-button-toggle-checked {
+  background-color: #38bdf8 !important;
+  color: #0f172a !important;
+}
+
+/* fade‑slide in */
+.fade-slide-in {
+  animation: fadeSlideIn 0.35s ease-out forwards;
+}
+
+/* fade‑slide out */
+.fade-slide-out {
+  animation: fadeSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+/* Bottom Actions */
+.form-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  padding-bottom: 4rem;
+}
+
+.big-btn {
+  padding: 1rem 2rem !important;
+  border-radius: 12px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+.submit-btn {
+  background-color: #ec4899 !important; /* Pink pop */
+  color: white !important;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,141 @@
+@if (course) {
+  <div class="page-wrapper">
+    <!-- Hero Header Section -->
+    <header class="course-hero">
+      <div class="container">
+        <nav class="top-nav">
+          <button class="glass-btn back-btn" [routerLink]="['/dashboard']">
+            <mat-icon>arrow_back</mat-icon> Dashboard
+          </button>
+          @if (canManageCourse) {
+            <div class="admin-actions">
+              <button mat-button class="edit-btn" [routerLink]="['/courses/edit', course.courseId]">
+                <mat-icon>edit</mat-icon> Edit
+              </button>
+              <app-delete-button
+                label="Delete"
+                [confirmMessage]="'Delete ' + course.courseName + '?'"
+                [deleteFn]="getDeleteFn(course.courseId!)"
+                (deleted)="onDeleted()"
+                >
+              </app-delete-button>
+            </div>
+          }
+          @if (!isInstructor) {
+            <div class="user-actions">
+              @if (!isEnrolled) {
+                <button mat-button class="enroll-btn" (click)="enroll()">
+                  <mat-icon>add</mat-icon> Enroll Now
+                </button>
+              }
+              @if (isEnrolled) {
+                <button mat-flat-button color="accent" class="start-btn">
+                  <mat-icon>play_circle_filled</mat-icon> Start Learning
+                </button>
+              }
+            </div>
+          }
+        </nav>
+        <div class="hero-content">
+          <h1 class="course-title">{{ course.courseName }}</h1>
+          <p class="course-description">{{ course.courseDescription }}</p>
+          <div class="course-meta">
+            <div class="meta-item">
+              <mat-icon>layers</mat-icon>
+              <span>{{ course.sections?.length || 0 }} Modules</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- Curriculum Area -->
+    <main class="container main-content">
+      @if (showSuccessBanner) {
+        <div class="success-banner">
+          <div class="banner-content">
+            <mat-icon>check_circle</mat-icon>
+            <div class="text">
+              <h3>You're in!</h3>
+              <p>
+                You have successfully enrolled in <strong>{{course.courseName}}</strong>. Your progress will now be tracked.
+              </p>
+            </div>
+          </div>
+          <button mat-icon-button (click)="showSuccessBanner = false">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+      <div class="curriculum-header">
+        <h2>Course Content</h2>
+        <p>Master the skills with our structured learning path.</p>
+      </div>
+      <div class="sections-list">
+        @for (section of course.sections; track section; let i = $index) {
+          <div
+            class="section-card"
+            [class.is-expanded]="isExpanded(section.sectionId!)"
+            >
+            <div class="section-trigger" (click)="toggleSection(section.sectionId!)">
+              <div class="section-title-group">
+                <div class="section-number">{{ i + 1 }}</div>
+                <h4>{{ section.title }}</h4>
+              </div>
+              <div class="section-status">
+                <span class="lesson-badge">{{ section.lessons?.length || 0 }} Lessons</span>
+                <mat-icon class="chevron">expand_more</mat-icon>
+              </div>
+            </div>
+            @if (isExpanded(section.sectionId!)) {
+              <div class="lesson-container">
+                @for (lesson of section.lessons; track lesson) {
+                  <div
+                    class="lesson-row"
+                    [class.disabled]="!isEnrolled"
+                    (click)="isEnrolled || isInstructor ? navigateToLesson(lesson.lessonId!) : null"
+                    >
+                    <div class="lesson-type-icon">
+                      @if (lesson.contentType === 'VIDEO') {
+                        <mat-icon>play_circle_outline</mat-icon>
+                      }
+                      @if (lesson.contentType === 'TEXT') {
+                        <mat-icon>description</mat-icon>
+                      }
+                    </div>
+                    <div class="lesson-info">
+                      <h5>{{ lesson.title }}</h5>
+                      @if (lesson.content) {
+                        <p>{{ lesson.content | slice:0:120 }}...</p>
+                      }
+                    </div>
+                    <button mat-icon-button class="lesson-action">
+                      <mat-icon>chevron_right</mat-icon>
+                    </button>
+                  </div>
+                }
+                @if (!section.lessons?.length) {
+                  <div class="empty-lessons">
+                    <mat-icon>info</mat-icon> No lessons added yet.
+                  </div>
+                }
+                @if (!isEnrolled && !isInstructor) {
+                  <mat-icon>lock</mat-icon>
+                }
+                @if (isEnrolled || isInstructor) {
+                  <mat-icon>play_arrow</mat-icon>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </main>
+  </div>
+} @else {
+  <div class="loading-state">
+    <div class="pulse-loader"></div>
+    <p>Preparing your workspace...</p>
+  </div>
+}
+
+<!-- Refined Loader -->

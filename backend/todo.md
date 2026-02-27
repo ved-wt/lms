@@ -1,0 +1,7 @@
+- User progress tracking
+- Locking next lesson until previous is completed
+- Quizzes per lesson
+- Drip content release
+- Certificates
+- Multiple instructors
+- Course versioning

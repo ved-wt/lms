@@ -1,0 +1,113 @@
+<div class="dashboard-wrapper">
+  <!-- Header Section -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1 class="title">My Learning Space</h1>
+      <p class="subtitle">Manage and explore your educational journey</p>
+    </div>
+
+    <div class="header-actions">
+      <!-- Search Bar (UX Win) -->
+      <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" placeholder="Search courses..." (input)="onSearch($event)" />
+      </div>
+
+      @if (isInstructor) {
+        <button mat-flat-button class="create-btn" [routerLink]="['/create-course']">
+          <span class="material-icons">add</span>
+          Create New Course
+        </button>
+      }
+    </div>
+  </header>
+
+  <!-- Content Section -->
+  <main class="content-area">
+    <div class="dashboard-container">
+      <!-- ============================= -->
+      <!-- SECTION 1: INSTRUCTOR AREA -->
+      <!-- ============================= -->
+      @if (isInstructor) {
+        <section class="management-section">
+          <div class="section-header">
+            <h2>My Created Courses</h2>
+          </div>
+          @if (myCourses.length > 0) {
+            <div class="courses-grid">
+              @for (course of myCourses; track course) {
+                <mat-card
+                  class="course-card glass-effect"
+                  [routerLink]="['/courses', course.courseId]"
+                  >
+                  <mat-card-header>
+                    <mat-card-title>{{ course.courseName }}</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-actions class="card-footer">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      [routerLink]="['/courses/edit', course.courseId]"
+                      (click)="$event.stopPropagation()"
+                      >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <app-delete-button
+                      (click)="$event.stopPropagation()"
+                      [confirmMessage]="'Delete ' + course.courseName + '?'"
+                      [deleteFn]="getDeleteFn(course.courseId!)"
+                      (deleted)="removeCourseFromList(course.courseId!)"
+                      >
+                    </app-delete-button>
+                  </mat-card-actions>
+                </mat-card>
+              }
+            </div>
+          } @else {
+            <div class="empty-state small">
+              <mat-icon>school</mat-icon>
+              <p>You haven’t created any courses yet.</p>
+            </div>
+          }
+        </section>
+      }
+
+      <!-- ============================= -->
+      <!-- SECTION 2: BROWSE COURSES -->
+      <!-- ============================= -->
+      <section class="browse-section">
+        <div class="section-header">
+          <h2>Explore Courses</h2>
+        </div>
+
+        @if (allCourses!.length > 0) {
+          <div class="courses-grid">
+            @for (course of allCourses; track course) {
+              <mat-card
+                class="course-card glass-effect hoverable"
+                [routerLink]="['/courses', course.courseId]"
+                >
+                <div class="card-image-placeholder">
+                  <mat-icon>import_contacts</mat-icon>
+                </div>
+                <mat-card-header>
+                  <mat-card-title>{{ course.courseName }}</mat-card-title>
+                  <!--<mat-card-subtitle> Instructor: {{ course.instructor.username }} </mat-card-subtitle>-->
+                </mat-card-header>
+              </mat-card>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <div class="empty-icon-circle">
+              <mat-icon>import_contacts</mat-icon>
+            </div>
+            <h3>No courses available</h3>
+            <p>Check back later for new content.</p>
+          </div>
+        }
+
+      </section>
+    </div>
+  </main>
+</div>

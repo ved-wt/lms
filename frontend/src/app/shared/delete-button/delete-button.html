@@ -1,0 +1,17 @@
+<button mat-flat-button color="warn" class="modern-delete-btn" (click)="onDelete()" [disabled]="isDeleting">
+  <div class="btn-content">
+    @if (!isDeleting) {
+      <mat-icon>delete_outline</mat-icon>
+    }
+    @if (!isDeleting) {
+      <span>{{ label }}</span>
+    }
+
+    @if (isDeleting) {
+      <div class="loader-inner">
+        <span class="dot-flashing"></span>
+        Deleting...
+      </div>
+    }
+  </div>
+</button>

@@ -1,0 +1,140 @@
+<div class="create-page-wrapper">
+  <div class="container py-5">
+    <header class="form-header mb-4">
+      <button mat-icon-button [routerLink]="['/dashboard']" class="back-link">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>Create New Course</h1>
+      <p>Design your curriculum and share your knowledge with the world.</p>
+    </header>
+
+    <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" class="main-form">
+      <!-- Course Basics -->
+      <section class="glass-card main-info-card">
+        <div class="card-header">
+          <mat-icon>menu_book</mat-icon>
+          <h2>Course Information</h2>
+        </div>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Course Title</mat-label>
+            <input matInput formControlName="courseName" placeholder="e.g. Master Spring Boot 3" />
+            @if (courseForm.get('courseName')?.invalid) {
+            <mat-error>Title is required (min 3 chars)</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea
+              matInput
+              formControlName="courseDescription"
+              rows="3"
+              placeholder="What will students learn?"
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Sections Area -->
+      <div formArrayName="sections" class="sections-container">
+        @for (section of sections.controls; track section; let i = $index) {
+        <div [formGroupName]="i" class="section-wrapper">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="title-group">
+                <span class="index-badge">{{ i + 1 }}</span>
+                <h3>Section</h3>
+              </div>
+              <button type="button" mat-icon-button color="warn" (click)="removeSection(i)">
+                <mat-icon>delete_sweep</mat-icon>
+              </button>
+            </div>
+            <div class="section-body">
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Section Title</mat-label>
+                <input matInput formControlName="title" placeholder="e.g. Introduction to MVC" />
+              </mat-form-field>
+              <!-- Lessons List -->
+              <div formArrayName="lessons" class="lessons-area">
+                @for (lesson of getLessons(i).controls; track lesson; let j = $index) {
+                <div [formGroupName]="j" class="lesson-card">
+                  <div class="lesson-header">
+                    <span>Lesson {{ j + 1 }}</span>
+                    <button type="button" class="mini-remove" (click)="removeLesson(i, j)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                  <div class="lesson-inputs">
+                    <input type="text" formControlName="title" placeholder="Lesson Title" class="custom-input mb-3" />
+                    <!-- Modern Toggle -->
+                    <div class="mb-3">
+                      <mat-button-toggle-group formControlName="contentType" class="modern-toggle">
+                        <mat-button-toggle value="TEXT"> <mat-icon>article</mat-icon> Text </mat-button-toggle>
+                        <mat-button-toggle value="VIDEO"> <mat-icon>play_circle</mat-icon> Video </mat-button-toggle>
+                      </mat-button-toggle-group>
+                    </div>
+                    <!-- Animation Viewport -->
+                    <div class="animation-container">
+                      @switch (lesson.get('contentType')?.value) {
+                      <!-- TEXT content -->
+                      @case ('TEXT') {
+                      <div class="slide-item" animate.enter="fade-slide-in" animate.leave="fade-slide-out">
+                        <textarea
+                          formControlName="content"
+                          placeholder="Enter lesson text..."
+                          rows="5"
+                          class="custom-input"
+                        ></textarea>
+                      </div>
+                      }
+                      <!-- VIDEO content -->
+                      @case ('VIDEO') {
+                      <div class="slide-item" animate.enter="fade-slide-in" animate.leave="fade-slide-out">
+                        <div class="video-link-box">
+                          <mat-icon>link</mat-icon>
+                          <input
+                            type="url"
+                            formControlName="videoUrl"
+                            placeholder="https://youtube.com/..."
+                            class="video-field"
+                          />
+                        </div>
+                      </div>
+                      }
+                      <!-- Optional default case -->
+                      @default {
+                      <div>
+                        <p>Please select a content type.</p>
+                      </div>
+                      } }
+                    </div>
+                  </div>
+                </div>
+                }
+                <button type="button" mat-button class="add-lesson-btn" (click)="addLesson(i)">
+                  <mat-icon>add</mat-icon> Add Lesson
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Form Footer Actions -->
+      <div class="form-actions mt-5">
+        <button type="button" mat-stroked-button color="primary" class="big-btn" (click)="addSection()">
+          <mat-icon>add_circle_outline</mat-icon> Add New Section
+        </button>
+
+        <button type="submit" mat-flat-button color="accent" class="big-btn submit-btn" [disabled]="isSubmitting">
+          @if (!isSubmitting) {
+          <mat-icon>publish</mat-icon>
+          } {{ isSubmitting ? 'Creating Course...' : 'Create Course' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
