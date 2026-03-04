@@ -12,7 +12,7 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from "@angular/materia
     <mat-dialog-content>{{ data.message }}</mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button (click)="onNoClick()">Cancel</button>
-      <button mat-flat-button color="warn" [mat-dialog-close]="true">Delete</button>
+      <button mat-flat-button color="warn" [mat-dialog-close]="true">{{ data.confirmText || "Confirm" }}</button>
     </mat-dialog-actions>
   `,
   styles: [
@@ -30,7 +30,7 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from "@angular/materia
 export class ConfirmDialog {
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: { message: string },
+    @Inject(MAT_DIALOG_DATA) public data: { message: string; confirmText?: string },
   ) {}
   onNoClick(): void {
     this.dialogRef.close(false);

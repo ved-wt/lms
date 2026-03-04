@@ -1,46 +1,59 @@
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 
 import { Component, OnInit } from "@angular/core";
-import { Course } from "../../models/course.model";
+import { Course, CourseProgressDTO } from "../../models/course.model";
 import { AuthService } from "../../services/auth";
 import { CourseService } from "../../features/courses/services/course.service";
 import { DeleteButton } from "../../shared/delete-button/delete-button";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatDialog } from "@angular/material/dialog";
+import { ConfirmDialog } from "../../shared/confirm-dialog/confirm-dialog";
 
 @Component({
   selector: "app-dashboard",
   standalone: true,
-  imports: [RouterModule, DeleteButton, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [RouterModule, DeleteButton, MatCardModule, MatButtonModule, MatIconModule, MatProgressBarModule],
   templateUrl: "./dashboard.html",
   styleUrls: ["./dashboard.css"],
 })
 export class Dashboard implements OnInit {
   allCourses: Course[] = [];
   myCourses: Course[] = [];
+  enrolledProgress: CourseProgressDTO[] = [];
   filteredCourses: Course[] = [];
+  dashboardProgress: CourseProgressDTO[] = [];
 
   isInstructor: boolean = false;
 
   constructor(
     private courseService: CourseService,
     public authService: AuthService,
+    private dialog: MatDialog,
+    private router: Router,
   ) {}
 
   ngOnInit() {
     this.isInstructor = this.authService.isInstructor();
 
-    this.courseService.getExploreCourses().subscribe((data) => {
-      this.allCourses = data;
-      this.filteredCourses = data;
-    });
+    if (!this.authService.isInstructor()) {
+      this.courseService.getDashboardProgress().subscribe((data) => {
+        this.enrolledProgress = data;
+      });
+    }
 
     if (this.isInstructor) {
       this.courseService.getMyCourses().subscribe((data) => {
         this.myCourses = data;
       });
     }
+
+    this.courseService.getAllCourses().subscribe((data) => {
+      this.allCourses = data;
+      this.filteredCourses = data;
+    });
   }
 
   onSearch(event: any) {
@@ -65,5 +78,19 @@ export class Dashboard implements OnInit {
 
   getDeleteFn(courseId: number) {
     return () => this.courseService.deleteCourse(courseId);
+  }
+
+  logout() {
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: "350px",
+      data: { message: "Are you sure you want to log out?", confirmText: "Logout" },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.authService.logout();
+        this.router.navigate(["/login"]);
+      }
+    });
   }
 }

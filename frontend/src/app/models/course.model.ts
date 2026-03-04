@@ -25,3 +25,11 @@ export interface Lesson {
   videoUrl?: string;
   orderIndex: number;
 }
+
+export interface CourseProgressDTO {
+  courseName: string;
+  courseId: number;
+  progressPercentage: number;
+  completedLessons: number;
+  totalLessons: number;
+}

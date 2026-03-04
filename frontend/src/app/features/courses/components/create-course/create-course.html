@@ -4,7 +4,7 @@
       <button mat-icon-button [routerLink]="['/dashboard']" class="back-link">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h1>Create New Course</h1>
+      <h1>{{ isEditMode ? 'Edit Course' : 'Create New Course' }}</h1>
       <p>Design your curriculum and share your knowledge with the world.</p>
     </header>
 
@@ -33,6 +33,11 @@
               rows="3"
               placeholder="What will students learn?"
             ></textarea>
+            <mat-error>
+              @if (courseForm.get('courseName')?.errors?.['serverError']) { {{
+              courseForm.get('courseName')?.errors?.['serverError'] }} } @else { Description is required. Min 10 chars,
+              max 120 chars. }
+            </mat-error>
           </mat-form-field>
         </div>
       </section>
@@ -47,14 +52,49 @@
                 <span class="index-badge">{{ i + 1 }}</span>
                 <h3>Section</h3>
               </div>
-              <button type="button" mat-icon-button color="warn" (click)="removeSection(i)">
-                <mat-icon>delete_sweep</mat-icon>
-              </button>
+              <div class="header-actions">
+                @if (isEditMode) {
+                <button type="button" mat-icon-button color="primary" (click)="saveSection(i)" title="Save section">
+                  <mat-icon>save</mat-icon>
+                </button>
+                }
+                <button
+                  type="button"
+                  mat-icon-button
+                  class="btn-delete"
+                  (click)="removeSection(i)"
+                  title="Delete section"
+                  color="{{ sections.length <= 1 ? 'warn' : '' }}"
+                  [disabled]="sections.length <= 1"
+                >
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
+              </div>
             </div>
             <div class="section-body">
               <mat-form-field appearance="fill" class="full-width">
                 <mat-label>Section Title</mat-label>
-                <input matInput formControlName="title" placeholder="e.g. Introduction to MVC" />
+                <input
+                  matInput
+                  formControlName="title"
+                  placeholder="e.g. Introduction to MVC"
+                  (blur)="saveSection(i)"
+                  (focus)="clearIfDefault($event, 'New Section')"
+                />
+                <mat-error>
+                  @if (courseForm.get('sections')?.errors?.['serverError']) { {{
+                  courseForm.get('sections')?.errors?.['serverError'] }} } @else { Title is required (min 3 chars) }
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Section Description</mat-label>
+                <textarea
+                  matInput
+                  formControlName="description"
+                  placeholder="e.g. Learn about MVC architecture"
+                  (blur)="saveSection(i)"
+                  (focus)="clearIfDefault($event, 'Description')"
+                ></textarea>
               </mat-form-field>
               <!-- Lessons List -->
               <div formArrayName="lessons" class="lessons-area">
@@ -62,15 +102,40 @@
                 <div [formGroupName]="j" class="lesson-card">
                   <div class="lesson-header">
                     <span>Lesson {{ j + 1 }}</span>
-                    <button type="button" class="mini-remove" (click)="removeLesson(i, j)">
-                      <mat-icon>close</mat-icon>
-                    </button>
+                    <div class="lesson-actions">
+                      @if (isEditMode) {
+                      <button
+                        type="button"
+                        mat-icon-button
+                        class="save"
+                        (click)="saveLesson(i, j)"
+                        [color]="getLessons(i).at(j).dirty ? 'green' : ''"
+                        title="Save lesson content"
+                      >
+                        <mat-icon>{{ getLessons(i).at(j).get('lessonId')?.value ? 'check_circle' : 'save' }}</mat-icon>
+                      </button>
+                      }
+                      <button type="button" class="mini-remove" (click)="removeLesson(i, j)" title="Delete button">
+                        <mat-icon>delete_outline</mat-icon>
+                      </button>
+                    </div>
                   </div>
                   <div class="lesson-inputs">
-                    <input type="text" formControlName="title" placeholder="Lesson Title" class="custom-input mb-3" />
+                    <input
+                      type="text"
+                      formControlName="title"
+                      placeholder="Lesson Title"
+                      class="custom-input mb-3"
+                      (blur)="saveLesson(i, j)"
+                      (focus)="clearIfDefault($event, 'New Lesson')"
+                    />
                     <!-- Modern Toggle -->
                     <div class="mb-3">
-                      <mat-button-toggle-group formControlName="contentType" class="modern-toggle">
+                      <mat-button-toggle-group
+                        formControlName="contentType"
+                        (change)="onContentTypeChange(i, j); saveLesson(i, j)"
+                        class="modern-toggle"
+                      >
                         <mat-button-toggle value="TEXT"> <mat-icon>article</mat-icon> Text </mat-button-toggle>
                         <mat-button-toggle value="VIDEO"> <mat-icon>play_circle</mat-icon> Video </mat-button-toggle>
                       </mat-button-toggle-group>
@@ -83,6 +148,8 @@
                       <div class="slide-item" animate.enter="fade-slide-in" animate.leave="fade-slide-out">
                         <textarea
                           formControlName="content"
+                          (blur)="saveLesson(i, j)"
+                          (focus)="clearIfDefault($event, 'Enter lesson text...')"
                           placeholder="Enter lesson text..."
                           rows="5"
                           class="custom-input"
@@ -97,6 +164,7 @@
                           <input
                             type="url"
                             formControlName="videoUrl"
+                            (blur)="saveLesson(i, j)"
                             placeholder="https://youtube.com/..."
                             class="video-field"
                           />
@@ -131,8 +199,8 @@
 
         <button type="submit" mat-flat-button color="accent" class="big-btn submit-btn" [disabled]="isSubmitting">
           @if (!isSubmitting) {
-          <mat-icon>publish</mat-icon>
-          } {{ isSubmitting ? 'Creating Course...' : 'Create Course' }}
+          <mat-icon>{{ isEditMode ? 'check_circle' : 'publish' }}</mat-icon>
+          } {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Course Info' : 'Create Course') }}
         </button>
       </div>
     </form>

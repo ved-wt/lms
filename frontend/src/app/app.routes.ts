@@ -15,5 +15,6 @@ export const routes: Routes = [
   { path: "register", component: Register },
   { path: "create-course", component: CreateCourse, canActivate: [authGuard, instructorGuard] },
   { path: "courses/:id/lessons/:lessonId", component: LessonViewer },
+  { path: "courses/:id/edit", component: CreateCourse, canActivate: [instructorGuard] },
   { path: "", redirectTo: "/login", pathMatch: "full" },
 ];

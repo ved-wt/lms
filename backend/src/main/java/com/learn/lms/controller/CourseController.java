@@ -7,20 +7,17 @@ import com.learn.lms.model.Section;
 import com.learn.lms.model.User;
 import com.learn.lms.service.CourseService;
 import com.learn.lms.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -34,29 +31,65 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    // @GetMapping
-    // public List<Course> all() {
-    //     return courseService.getAllCourses();
-    // }
+    // --- DTOs ---
+
+    public static class CourseCreateRequest {
+
+        @NotBlank(message = "Course name cannot be blank")
+        public String courseName;
+
+        @Size(min = 10, max = 120, message = "Course description must be 10-120 characters")
+        public String courseDescription;
+
+        @NotEmpty(message = "A course must have at least one section")
+        @Valid // Validates the objects inside the list
+        public List<SectionCreateRequest> sections;
+    }
+
+    public static class SectionCreateRequest {
+
+        @NotBlank(message = "Section title cannot be blank")
+        public String title;
+
+        @Size(min = 10, max = 120, message = "Section description must be 10-120 characters")
+        public String description;
+
+        public int orderIndex;
+
+        @NotEmpty(message = "A section must have at least one lesson")
+        @Valid // Validates the objects inside the list
+        public List<LessonRequest> lessons;
+    }
+
+    public static class LessonRequest {
+
+        @NotBlank(message = "Lesson title cannot be blank")
+        public String title;
+
+        public String description;
+
+        @Min(value = 0, message = "Order index must be non-negative")
+        public int orderIndex;
+
+        public String content;
+        public String contentType;
+        public String videoUrl;
+    }
+
+    // --- Course Endpoints ---
 
     @GetMapping
     public List<Course> getCourses(@RequestParam(required = false) String filter, Authentication auth) {
-        System.out.println("FILTER RECEIVED = " + filter);
-        if (filter == null) {
-            return courseService.getAllCourses();
-        }
+        if (filter == null) return courseService.getAllCourses();
 
         String username = auth.getName();
         User user = userService.getUserByUsername(username);
 
-        switch (filter) {
-            case "explore":
-                return courseService.getExploreCourses(user.getId());
-            case "my":
-                return courseService.getCoursesByInstructor(user.getId());
-            default:
-                return courseService.getAllCourses();
-        }
+        return switch (filter) {
+            case "explore" -> courseService.getExploreCourses(user.getId());
+            case "my" -> courseService.getCoursesByInstructor(user.getId());
+            default -> courseService.getAllCourses();
+        };
     }
 
     @GetMapping("/{id:\\d+}")
@@ -66,99 +99,193 @@ public class CourseController {
         return ResponseEntity.ok(c);
     }
 
-    public static class CourseCreateRequest {
-
-        public String courseName;
-        public String courseDescription;
-        public Long instructorId;
-        public List<SectionRequest> sections;
-    }
-
-    public static class SectionRequest {
-
-        public String title;
-        public String description;
-        public int orderIndex;
-        public List<LessonRequest> lessons;
-    }
-
-    public static class LessonRequest {
-
-        public String title;
-        public String description;
-        public int orderIndex;
-        public String content;
-        public String contentType;
-        public String videoUrl;
-    }
-
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody CourseCreateRequest req) {
-        Course saved = courseService.createCourse(req);
+    public ResponseEntity<Course> createCourse(@Valid @RequestBody CourseCreateRequest req, Authentication auth) {
+        Course saved = courseService.createCourse(req, auth.getName());
         return ResponseEntity.created(URI.create("/api/courses/" + saved.getCourseId())).body(saved);
-    }
-
-    @DeleteMapping("/{courseId}")
-    public ResponseEntity<String> deleteCourse(@PathVariable Long courseId, Authentication auth) {
-        Course course = courseService.getCourseById(courseId);
-        String currentUsername = auth.getName();
-
-        if (!course.getInstructor().getUsername().equals(currentUsername)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not own this course");
-        }
-        courseService.deleteCourse(courseId);
-        return ResponseEntity.noContent().build();
-    }
-
-    // Note to self: These will be useful for when instructors want to edit their courses.
-    // instead of using the createCourse endpoint, we can simply update only a section/lesson using courseID.
-    // Seems genius :)
-    public static class SectionCreateRequest {
-
-        public String title;
-        public Integer orderIndex;
-    }
-
-    @PostMapping("/{courseId}/sections")
-    public ResponseEntity<Section> addSection(@PathVariable Long courseId, @RequestBody SectionCreateRequest req) {
-        Section s = new Section();
-        s.setTitle(req.title);
-        s.setOrderIndex(req.orderIndex);
-        Section saved = courseService.addSectionToCourse(courseId, s);
-        if (saved == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.created(URI.create("/api/sections/" + saved.getSectionId())).body(saved);
-    }
-
-    public static class LessonCreateRequest {
-
-        public String title;
-        public String contentType;
-        public String content;
-        public Integer orderIndex;
-    }
-
-    @PostMapping("/sections/{sectionId}/lessons")
-    public ResponseEntity<Lesson> addLesson(@PathVariable Long sectionId, @RequestBody LessonCreateRequest req) {
-        Lesson l = new Lesson();
-        l.setTitle(req.title);
-        if (req.contentType != null) {
-            try {
-                l.setContentType(ContentType.valueOf(req.contentType.toUpperCase()));
-            } catch (Exception e) {}
-        }
-        l.setContent(req.content);
-        l.setOrderIndex(req.orderIndex);
-        Lesson saved = courseService.addLessonToSection(sectionId, l);
-        if (saved == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.created(URI.create("/api/lessons/" + saved.getLessonId())).body(saved);
     }
 
     @PutMapping("/{courseId:\\d+}")
     public ResponseEntity<Course> updateCourse(
         @PathVariable Long courseId,
-        @RequestBody CourseCreateRequest req,
+        @Valid @RequestBody CourseCreateRequest req,
         Authentication auth
     ) {
-        throw new UnsupportedOperationException("Not implemented");
+        Course existing = courseService.getCourseById(courseId);
+        if (existing == null) return ResponseEntity.notFound().build();
+
+        if (!existing.getInstructor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        existing.setCourseName(req.courseName);
+        existing.setCourseDescription(req.courseDescription);
+
+        return ResponseEntity.ok(courseService.updateCourse(existing));
+    }
+
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId, Authentication auth) {
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) return ResponseEntity.notFound().build();
+
+        if (!course.getInstructor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        courseService.deleteCourse(courseId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // --- Section Endpoints ---
+
+    @PostMapping("/{courseId}/sections")
+    public ResponseEntity<Section> addSection(
+        @PathVariable Long courseId,
+        @Valid @RequestBody SectionCreateRequest req,
+        Authentication auth
+    ) {
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) return ResponseEntity.notFound().build();
+
+        if (!course.getInstructor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Section s = new Section();
+        s.setTitle(req.title);
+        s.setDescription(req.description);
+        s.setOrderIndex(req.orderIndex);
+
+        if (req.lessons != null && !req.lessons.isEmpty()) {
+            List<Lesson> lessons = req.lessons
+                .stream()
+                .map(lReq -> {
+                    Lesson l = new Lesson();
+                    l.setTitle(lReq.title);
+                    l.setOrderIndex(lReq.orderIndex);
+                    l.setContentType(com.learn.lms.model.ContentType.TEXT);
+                    l.setSection(s);
+                    return l;
+                })
+                .toList();
+            s.setLessons(lessons);
+        }
+        // ------------------------------------------------
+
+        Section saved = courseService.addSectionToCourse(courseId, s);
+        return ResponseEntity.created(URI.create("/api/sections/" + saved.getSectionId())).body(saved);
+    }
+
+    @PutMapping("/sections/{sectionId}")
+    public ResponseEntity<Section> updateSection(
+        @PathVariable Long sectionId,
+        @Valid @RequestBody SectionCreateRequest req,
+        Authentication auth
+    ) {
+        Section s = courseService.getSectionById(sectionId);
+        if (s == null) return ResponseEntity.notFound().build();
+
+        if (!s.getCourse().getInstructor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        s.setTitle(req.title);
+        // s.setDescription(req.description); // Syncing description
+        s.setOrderIndex(req.orderIndex);
+        return ResponseEntity.ok(courseService.saveSection(s));
+    }
+
+    @DeleteMapping("/{courseId}/sections/{sectionId}")
+    public ResponseEntity<Void> deleteSection(
+        @PathVariable Long courseId,
+        @PathVariable Long sectionId,
+        Authentication auth
+    ) {
+        Course course = courseService.getCourseById(courseId);
+        if (course == null || !course.getInstructor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        courseService.deleteSection(sectionId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // --- Lesson Endpoints ---
+
+    @PostMapping("/sections/{sectionId}/lessons")
+    public ResponseEntity<Lesson> addLesson(
+        @PathVariable Long sectionId,
+        @Valid @RequestBody LessonRequest req,
+        Authentication auth
+    ) {
+        Section section = courseService.getSectionById(sectionId);
+        if (section == null) return ResponseEntity.notFound().build();
+
+        // Ownership Check via Course
+        if (!section.getCourse().getInstructor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Lesson l = new Lesson();
+        l.setTitle(req.title);
+        // l.setDescription(req.description); // Syncing description
+        l.setContent(req.content);
+        l.setOrderIndex(req.orderIndex);
+        l.setVideoUrl(req.videoUrl);
+
+        if (req.contentType != null) {
+            try {
+                l.setContentType(ContentType.valueOf(req.contentType.toUpperCase()));
+            } catch (Exception e) {
+                l.setContentType(ContentType.TEXT);
+            }
+        }
+
+        Lesson saved = courseService.addLessonToSection(sectionId, l);
+        return ResponseEntity.created(URI.create("/api/lessons/" + saved.getLessonId())).body(saved);
+    }
+
+    @PutMapping("/lessons/{lessonId}")
+    public ResponseEntity<Lesson> updateLesson(
+        @PathVariable Long lessonId,
+        @Valid @RequestBody LessonRequest req,
+        Authentication auth
+    ) {
+        Lesson l = courseService.getLessonById(lessonId);
+        if (l == null) return ResponseEntity.notFound().build();
+
+        if (!l.getSection().getCourse().getInstructor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        l.setTitle(req.title);
+        // l.setDescription(req.description); // Syncing description
+        l.setContent(req.content);
+        l.setOrderIndex(req.orderIndex);
+        l.setVideoUrl(req.videoUrl);
+
+        if (req.contentType != null) {
+            try {
+                l.setContentType(ContentType.valueOf(req.contentType.toUpperCase()));
+            } catch (Exception e) {
+                l.setContentType(ContentType.TEXT);
+            }
+        }
+
+        return ResponseEntity.ok(courseService.saveLesson(l));
+    }
+
+    @DeleteMapping("/{courseId}/sections/{sectionId}/lessons/{lessonId}")
+    public ResponseEntity<Void> deleteLesson(
+        @PathVariable Long courseId,
+        @PathVariable Long sectionId,
+        @PathVariable Long lessonId,
+        Authentication auth
+    ) {
+        Course course = courseService.getCourseById(courseId);
+        if (course == null || !course.getInstructor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        courseService.deleteLesson(lessonId);
+        return ResponseEntity.noContent().build();
     }
 }

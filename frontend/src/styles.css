@@ -39,3 +39,77 @@ body {
 
   --brand-gradient: linear-gradient(135deg, var(--almond-silk), var(--iron-grey));
 }
+
+/* 1. Main Container: Smooth rounded corners and consistent background */
+.cdk-overlay-pane mat-dialog-container {
+  --mdc-dialog-container-color: var(--iron-grey) !important;
+  border-radius: 28px !important; /* Matches the rounded look in the image */
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+/* 2. Remove the "white lines" (MDC borders/separators) */
+.mat-mdc-dialog-title,
+.mat-mdc-dialog-content,
+.mat-mdc-dialog-actions {
+  background-color: var(--iron-grey) !important;
+  border: none !important; /* Removes default separator lines */
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+/* 3. Title Styling */
+.mat-mdc-dialog-title {
+  color: var(--honey-bronze) !important;
+  font-family: "Inter", sans-serif !important;
+  font-weight: 800 !important;
+  padding: 24px 24px 10px 24px !important;
+}
+
+/* 4. Content Styling */
+.mat-mdc-dialog-content {
+  color: var(--almond-silk) !important;
+  font-size: 1.1rem !important;
+  padding: 0 24px 20px 24px !important;
+  line-height: 1.5;
+}
+
+/* 5. Actions/Buttons Area */
+.mat-mdc-dialog-actions {
+  padding: 0 24px 24px 24px !important;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* 6. Cancel Button: Almond Silk Border (Stroked look) */
+.mat-mdc-dialog-actions button:not([color="warn"]) {
+  color: var(--almond-silk) !important;
+  border: 1px solid var(--almond-silk) !important;
+  border-radius: 25px !important; /* Pill shape */
+  background-color: transparent !important;
+  padding: 0 20px !important;
+  height: 40px !important;
+  transition: all 0.2s ease;
+}
+
+.mat-mdc-dialog-actions button:not([color="warn"]):hover {
+  background-color: rgba(244, 214, 204, 0.1) !important; /* Subtle glow on hover */
+}
+
+/* 7. Delete Button: Blushed Brick Pill */
+.mat-mdc-dialog-actions button[color="warn"] {
+  background-color: var(--blushed-brick) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  border-radius: 25px !important; /* Pill shape */
+  padding: 0 24px !important;
+  height: 40px !important;
+  border: none !important;
+}
+
+/* Backdrop Blur (Optional but looks great with dark themes) */
+.cdk-overlay-dark-backdrop {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px);
+}

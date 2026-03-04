@@ -102,26 +102,6 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public Section addSectionToCourse(Long courseId, Section section) {
-        Course course = courseRepository.findById(courseId).orElse(null);
-        if (course == null) return null;
-        section.setCourse(course);
-        Section saved = sectionRepository.save(section);
-        course.getSections().add(saved);
-        courseRepository.save(course);
-        return saved;
-    }
-
-    public Lesson addLessonToSection(Long sectionId, Lesson lesson) {
-        Section section = sectionRepository.findById(sectionId).orElse(null);
-        if (section == null) return null;
-        lesson.setSection(section);
-        Lesson saved = lessonRepository.save(lesson);
-        section.getLessons().add(saved);
-        sectionRepository.save(section);
-        return saved;
-    }
-
     public long getCourseProgress(Long userId, Long courseId) {
         long totalLessons = lessonRepository.countBySection_Course_CourseId(courseId);
         if (totalLessons == 0) return 0;
@@ -138,5 +118,93 @@ public class CourseService {
 
     public void deleteCourse(Long courseId) {
         courseRepository.deleteById(courseId);
+    }
+
+    public void deleteSection(Long sectionId) {
+        sectionRepository.deleteById(sectionId);
+    }
+
+    public void deleteLesson(Long lessonId) {
+        lessonRepository.deleteById(lessonId);
+    }
+
+    public Section getSectionById(Long id) {
+        return sectionRepository.findById(id).orElse(null);
+    }
+
+    public Lesson getLessonById(Long id) {
+        return lessonRepository.findById(id).orElse(null);
+    }
+
+    public Section saveSection(Section section) {
+        return sectionRepository.save(section);
+    }
+
+    public Lesson saveLesson(Lesson lesson) {
+        return lessonRepository.save(lesson);
+    }
+
+    public Section addSectionToCourse(Long courseId, Section section) {
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null) return null;
+        section.setCourse(course);
+        course.getSections().add(section);
+        return sectionRepository.save(section);
+    }
+
+    public Lesson addLessonToSection(Long sectionId, Lesson lesson) {
+        Section section = sectionRepository.findById(sectionId).orElse(null);
+        if (section == null) return null;
+        lesson.setSection(section);
+        section.getLessons().add(lesson);
+        return lessonRepository.save(lesson);
+    }
+
+    public Course updateCourse(Course course) {
+        return courseRepository.save(course);
+    }
+
+    public Course createCourse(CourseCreateRequest req, String username) {
+        User instructor = userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("Instructor not found"));
+
+        Course course = new Course();
+        course.setCourseName(req.courseName);
+        course.setCourseDescription(req.courseDescription);
+        course.setInstructor(instructor);
+
+        if (req.sections != null) {
+            List<Section> sections = req.sections
+                .stream()
+                .map(sReq -> {
+                    Section section = new Section();
+                    section.setTitle(sReq.title);
+                    section.setOrderIndex(sReq.orderIndex);
+                    section.setCourse(course);
+
+                    if (sReq.lessons != null) {
+                        List<Lesson> lessons = sReq.lessons
+                            .stream()
+                            .map(lReq -> {
+                                Lesson lesson = new Lesson();
+                                lesson.setTitle(lReq.title);
+                                lesson.setContentType(ContentType.valueOf(lReq.contentType));
+                                lesson.setContent(lReq.content);
+                                lesson.setVideoUrl(lReq.videoUrl);
+                                lesson.setOrderIndex(lReq.orderIndex);
+                                lesson.setSection(section);
+                                return lesson;
+                            })
+                            .collect(Collectors.toList());
+                        section.setLessons(lessons);
+                    }
+                    return section;
+                })
+                .collect(Collectors.toList());
+            course.setSections(sections);
+        }
+
+        return courseRepository.save(course);
     }
 }

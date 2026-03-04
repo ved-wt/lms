@@ -34,6 +34,7 @@ public class EnrollmentController {
     // CREATE ENROLLMENT
     public static class EnrollRequest {
 
+        @NotNull(message = "Course ID cannot be null")
         public Long courseId;
     }
 

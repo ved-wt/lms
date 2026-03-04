@@ -1,176 +1,281 @@
-/*:host {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --glass-bg: rgba(255, 255, 255, 0.12);
-  --glass-border: rgba(255, 255, 255, 0.2);
-}
-*/
-
+/* --- 1. CORE WRAPPER --- */
 .dashboard-wrapper {
-  padding: 2rem;
+  background: radial-gradient(circle at top right, var(--iron-grey), var(--gunmetal));
   min-height: 100vh;
-  background: var(--brand-gradient);
+  padding: 3rem 2rem;
+  color: var(--text-main);
   font-family: "Inter", sans-serif;
-  color: white;
 }
 
-/* Header Styling */
+/* --- 2. HEADER SECTION --- */
 .dashboard-header {
   max-width: 1200px;
-  margin: 0 auto 3rem auto;
+  margin: 0 auto 4rem auto;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  flex-wrap: wrap;
   gap: 2rem;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: -1.5px;
+  color: var(--honey-bronze);
   margin: 0;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .subtitle {
-  opacity: 0.8;
+  color: var(--almond-silk);
   font-size: 1.1rem;
+  opacity: 0.9;
+  margin-top: 0.5rem;
 }
 
-.header-actions {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-/* Search Box */
+/* --- 3. SEARCH & CREATE ACTIONS --- */
 .search-box {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 8px 16px;
+  background: rgba(74, 88, 89, 0.4); /* Iron Grey glass */
+  border: 1px solid rgba(244, 214, 204, 0.2); /* Almond Silk border */
+  border-radius: 14px;
+  padding: 10px 18px;
   display: flex;
   align-items: center;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 }
 
 .search-box:focus-within {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  border-color: var(--honey-bronze);
+  background: rgba(74, 88, 89, 0.6);
+  box-shadow: 0 0 0 4px rgba(244, 184, 96, 0.1);
+}
+
+.search-box mat-icon {
+  color: var(--honey-bronze);
 }
 
 .search-box input {
   background: transparent;
   border: none;
   color: white;
-  margin-left: 10px;
+  margin-left: 12px;
   outline: none;
-  width: 200px;
+  width: 240px;
+  font-weight: 500;
 }
 
 .search-box input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--almond-silk);
+  opacity: 0.5;
 }
 
 .create-btn {
-  background-color: var(--action-primary) !important;
-  color: white !important;
-  padding: 0.5rem 1.5rem !important;
-  border-radius: 12px !important;
-  font-weight: 600 !important;
-  display: flex !important;
-  align-items: center;
-  gap: 8px;
+  background-color: var(--honey-bronze) !important;
+  color: var(--gunmetal) !important; /* High contrast text */
+  padding: 0.7rem 1.8rem !important;
+  border-radius: 14px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 20px rgba(244, 184, 96, 0.2);
+  transition: transform 0.2s ease !important;
 }
 
-/* Course Cards */
+.create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(244, 184, 96, 0.3);
+}
+
+.logout-btn {
+  border: 1px solid rgba(244, 214, 204, 0.3) !important;
+  color: var(--almond-silk) !important;
+  border-radius: 14px !important;
+  padding: 0.7rem 1.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.logout-btn:hover {
+  background-color: rgba(255, 82, 82, 0.1) !important; /* Slight red tint */
+  border-color: #ff5252 !important;
+  color: #ff5252 !important;
+}
+
+/* Ensure material icons inside buttons align correctly */
+.header-actions button .material-icons {
+  font-size: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* --- 4. COURSE GRID & CARDS --- */
 .courses-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .course-card {
-  background: var(--card-bg) !important;
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--card-border) !important;
-  border-radius: 20px !important;
+  background: var(--iron-grey) !important;
+  border: 1px solid rgba(244, 214, 204, 0.15) !important;
+  border-radius: 24px !important;
   overflow: hidden;
-  transition:
-    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   color: white !important;
-  display: flex;
-  flex-direction: column;
+  position: relative;
 }
 
 .course-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  /*background: var(--card-bg) !important;*/
+  transform: translateY(-12px);
+  border-color: var(--honey-bronze) !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
 }
 
 .card-image-placeholder {
-  height: 140px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 160px;
+  background: linear-gradient(45deg, var(--gunmetal), var(--iron-grey));
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 2px solid var(--honey-bronze);
 }
 
-.card-image-placeholder .material-icons {
-  font-size: 3rem;
-  opacity: 0.5;
+.card-image-placeholder mat-icon {
+  font-size: 4rem;
+  width: 64px;
+  height: 64px;
+  color: var(--honey-bronze);
+  opacity: 0.4;
 }
 
 .course-card mat-card-title {
-  font-size: 1.4rem !important;
-  font-weight: 700 !important;
-  margin-top: 1rem;
+  font-size: 1.5rem !important;
+  font-weight: 800 !important;
+  color: var(--honey-bronze) !important;
+  letter-spacing: -0.5px;
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
 }
 
 .description {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--almond-silk);
+  padding: 0 1.5rem 1.5rem 1.5rem;
   line-height: 1.6;
-  min-height: 4.8em;
+  opacity: 0.8;
+  font-size: 0.95rem;
+  min-height: 5em;
 }
 
 .card-footer {
-  padding: 1rem !important;
-  border-top: 1px solid var(--glass-border);
+  padding: 1.2rem 1.5rem !important;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(244, 214, 204, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: auto;
 }
 
 .view-btn {
-  color: var(--action-primary) !important;
-  font-weight: 600 !important;
+  color: var(--honey-bronze) !important;
+  font-weight: 700 !important;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-size: 0.85rem;
 }
 
-/* Empty State */
+/* --- 5. PROGRESS TRACKING (Refined) --- */
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.progress-card {
+  background: rgba(74, 88, 89, 0.5);
+  border: 1px solid rgba(244, 214, 204, 0.1);
+  border-radius: 18px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.progress-card:hover {
+  background: var(--iron-grey);
+  border-color: var(--honey-bronze);
+}
+
+.card-info h4 {
+  color: var(--honey-bronze);
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.lesson-count {
+  font-size: 0.85rem;
+  color: var(--almond-silk);
+  opacity: 0.7;
+}
+
+.percent-text {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--honey-bronze);
+}
+
+/* Material Progress Bar Customization */
+::ng-deep mat-progress-bar {
+  height: 10px !important;
+  border-radius: 5px;
+}
+
+::ng-deep mat-progress-bar .mdc-linear-progress__bar-inner {
+  border-color: var(--honey-bronze) !important; /* Progress color */
+}
+
+::ng-deep mat-progress-bar .mdc-linear-progress__buffer-bar {
+  background-color: rgba(255, 255, 255, 0.1) !important; /* Track color */
+}
+
+/* --- 6. EMPTY STATE --- */
 .empty-state {
   text-align: center;
-  padding: 5rem 1rem;
+  padding: 6rem 1rem;
 }
 
 .empty-icon-circle {
-  width: 80px;
-  height: 80px;
-  background: var(--glass-bg);
+  width: 100px;
+  height: 100px;
+  background: rgba(244, 214, 204, 0.05);
+  border: 2px dashed var(--almond-silk);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.5rem auto;
+  margin: 0 auto 2rem auto;
 }
 
-.empty-icon-circle .material-icons {
-  font-size: 2.5rem;
-  opacity: 0.7;
+.empty-icon-circle mat-icon {
+  font-size: 3rem;
+  width: 48px;
+  height: 48px;
+  color: var(--almond-silk);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: var(--honey-bronze);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  color: var(--almond-silk);
+  max-width: 400px;
+  margin: 0 auto;
 }

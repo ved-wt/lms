@@ -4,16 +4,24 @@ import lombok.Data;
 
 @Data
 public class CourseProgressDTO {
-    public CourseProgressDTO(String courseName2, long progress, long completedLessonsCount, long totalLessonsCount) {
+
+    public CourseProgressDTO(
+        String courseName2,
+        long courseId,
+        double progressPercentage,
+        long completedLessonsCount,
+        long totalLessonsCount
+    ) {
         this.courseName = courseName2;
-        this.progressPercentage = (int) progress;
+        this.courseId = courseId;
+        this.progressPercentage = progressPercentage;
         this.completedLessons = completedLessonsCount;
         this.totalLessons = totalLessonsCount;
     }
 
     private String courseName;
-    private int progressPercentage;
+    private long courseId;
+    private double progressPercentage;
     private long completedLessons;
     private long totalLessons;
-
 }

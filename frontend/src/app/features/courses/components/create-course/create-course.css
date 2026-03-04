@@ -1,91 +1,118 @@
+/* --- 1. CORE LAYOUT & WRAPPER --- */
 .create-page-wrapper {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: radial-gradient(circle at 20% 10%, var(--iron-grey), var(--gunmetal));
   min-height: 100vh;
-  color: white;
-  font-family: "Inter", sans-serif;
+  color: var(--text-main);
+  font-family:
+    "Inter",
+    -apple-system,
+    sans-serif;
+  padding-bottom: 5rem;
+  overflow-x: hidden;
 }
 
+.container {
+  max-width: 900px;
+}
+
+/* --- 2. HEADER & NAVIGATION --- */
 .form-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   text-align: center;
+  padding: 2rem 0;
 }
 
 .back-link {
-  color: #94a3b8;
+  color: var(--almond-silk) !important;
   margin-bottom: 1rem;
-}
-.form-header h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin: 0;
-}
-.form-header p {
-  color: #94a3b8;
-  font-size: 1.1rem;
-}
-
-.main-form {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.glass-card {
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+}
+
+.form-header h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: var(--honey-bronze);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.form-header p {
+  color: var(--almond-silk);
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+/* --- 3. METADATA CARD (DARK / GLASSMORPHISM) --- */
+.main-info-card {
+  background: rgba(74, 88, 89, 0.4) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 214, 204, 0.15) !important;
+  border-radius: 24px !important;
+  padding: 2.5rem !important;
+  margin-bottom: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .card-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 1.5rem;
-  color: #38bdf8;
+  margin-bottom: 2rem;
+  color: var(--honey-bronze);
 }
 
 .card-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* Custom Inputs to keep it clean */
-.full-width {
+/* FIX: Scoping Metadata Labels to be bright Almond Silk instead of dark grey */
+.main-info-card ::ng-deep .mat-mdc-form-field {
   width: 100%;
 }
 
-::ng-deep .mat-mdc-form-field {
-  --mdc-filled-textField-container-color: rgba(255, 255, 255, 0.03);
-  --mdc-outlined-textField-focus-outline-color: #38bdf8;
-  --mat-form-field-container-placeholder-color: rgba(255, 255, 255, 0.4);
+.main-info-card ::ng-deep .mat-mdc-text-field-wrapper {
+  background-color: rgba(255, 255, 255, 0.05) !important; /* Subtle fill */
 }
 
-::ng-deep .mat-mdc-text-field-wrapper input,
-/*::ng-deep .mat-mdc-text-field-wrapper textarea {
-  color: white !important;
-}*/
+/* Targets both floating and non-floating labels in MDC */
+.main-info-card ::ng-deep .mdc-floating-label,
+.main-info-card ::ng-deep .mat-mdc-form-field-label {
+  color: var(--almond-silk) !important;
+  opacity: 0.9 !important;
+}
 
-/* Sections & Lessons */
+/* Input text remains white */
+.main-info-card ::ng-deep .mat-mdc-form-field input,
+.main-info-card ::ng-deep .mat-mdc-form-field textarea {
+  color: #ffffff !important;
+  caret-color: var(--honey-bronze) !important;
+}
+
+.main-info-card ::ng-deep .mdc-notched-outline__border {
+  border-color: rgba(244, 214, 204, 0.3) !important;
+}
+
+/* --- 4. CURRICULUM SECTION (LIGHT / DOCUMENT STYLE) --- */
 .section-wrapper {
-  margin-bottom: 2rem;
-  animation: slideUp 0.4s ease-out;
+  margin-bottom: 2.5rem;
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .section-card {
-  background: #f8fafc;
-  color: #1e293b;
-  border-radius: 16px;
+  background: #ffffff !important;
+  border-radius: 16px !important;
   overflow: hidden;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border: none !important;
 }
 
 .section-header {
-  background: #e2e8f0;
+  background: var(--gunmetal) !important;
   padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
@@ -95,107 +122,104 @@
 .title-group {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-.index-badge {
-  background: #38bdf8;
+  gap: 12px;
   color: white;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+}
+
+/* REFINED: Index Badge with a subtle border for depth */
+.index-badge {
+  background: var(--honey-bronze);
+  color: var(--gunmetal);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-weight: 800;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.3); /* Adds defining white border */
+}
+
+/* Add a gold border beneath the header to separate from the body */
+.section-card::after {
+  content: "";
+  display: block;
+  height: 4px;
+  background: var(--honey-bronze);
+  width: 100%;
 }
 
 .section-body {
-  padding: 1.5rem;
+  padding: 2rem;
 }
 
-/* Nested Lesson Cards */
+/* Light context labels */
+.section-body ::ng-deep .mat-mdc-form-field input {
+  color: var(--gunmetal) !important;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* --- 5. LESSONS AREA --- */
 .lessons-area {
-  margin-top: 1.5rem;
-  padding-left: 2rem;
-  border-left: 2px dashed #cbd5e1;
+  margin-top: 2rem;
+  padding-left: 1.5rem;
+  border-left: 3px dashed #e2e8f0;
 }
 
 .lesson-card {
-  background: white;
+  background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: 12px;
+  padding: 1.25rem;
   margin-bottom: 1rem;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.lesson-card:hover {
+  border-color: var(--honey-bronze);
+  background: #ffffff;
 }
 
 .lesson-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #64748b;
-  margin-bottom: 8px;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--iron-grey);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.mini-remove {
-  background: none;
-  border: none;
-  color: #ef4444;
-  cursor: pointer;
-}
-
+/* Custom Lesson Inputs */
 .custom-input {
   width: 100%;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 8px 12px;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-}
-
-.add-lesson-btn {
-  color: #38bdf8 !important;
-  font-weight: 600 !important;
-}
-.custom-select {
-  background: #f1f5f9;
+  background: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 0.85rem;
-  color: #1e293b;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  color: var(--gunmetal);
+  transition: all 0.2s;
 }
 
-.animation-container {
-  position: relative;
-  overflow: hidden; /* Clips the elements as they slide outside the card */
-  min-height: 150px; /* Adjust to match your content's expected height */
-  width: 100%;
-}
-
-.slide-item {
-  width: 100%;
-}
-
-.video-link-box {
-  display: flex;
-  align-items: center;
-  background: #f3f4f6;
-  border: 1px solid #374151;
-  border-radius: 12px;
-  padding: 0 15px;
-  gap: 10px;
-}
-
-.video-link-box mat-icon {
-  color: #1f2937;
+.custom-input:focus {
+  outline: none;
+  border-color: var(--honey-bronze);
+  box-shadow: 0 0 0 3px rgba(244, 184, 96, 0.15);
 }
 
 .video-field {
   background: transparent;
-  border: none;
+  border: groove;
+  border-radius: 10px;
   color: #111827;
-  padding: 12px 0;
+  padding: 12px 12px;
   width: 100%;
   outline: none;
 }
@@ -203,75 +227,112 @@
 .video-field::placeholder {
   color: #6b7280;
 }
+
+/* --- 6. DIRTY STATES (UNSAVED CHANGES) --- */
+.section-card:has(.ng-dirty:not(:placeholder-shown)) {
+  outline: 3px solid var(--honey-bronze);
+}
+
+.lesson-card.ng-dirty:has(input:not(:placeholder-shown)) {
+  border-left: 6px solid var(--honey-bronze);
+  background: #fffefb;
+}
+
+.ng-dirty:not(.ng-pristine) {
+  border-left: 3px solid #ff9800;
+}
+
+/* Optional: hide manual save buttons if you still have them in the template */
+.save-btn-hidden {
+  display: none;
+}
+
+/* --- 7. TOGGLES & ANIMATIONS --- */
 .modern-toggle {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: none !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  overflow: hidden;
 }
 
 ::ng-deep .modern-toggle .mat-button-toggle-checked {
-  background-color: #38bdf8 !important;
-  color: #0f172a !important;
+  background-color: var(--gunmetal) !important;
+  color: var(--honey-bronze) !important;
 }
 
-/* fade‑slide in */
+/* --- 8. BUTTONS & ACTIONS --- */
+.form-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  padding: 2rem 0 5rem;
+}
+
+.big-btn {
+  height: 56px !important;
+  padding: 0 40px !important;
+  border-radius: 14px !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, var(--honey-bronze), #d99c40) !important;
+  color: var(--gunmetal) !important;
+  box-shadow: 0 10px 20px rgba(244, 184, 96, 0.2);
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Save Icon Button */
+.header-actions button[color="primary"],
+.header-actions mat-icon:contains("save"),
+.header-actions mat-icon:contains("check_circle") {
+  color: var(--honey-bronze) !important;
+  opacity: 1 !important;
+}
+
+/* Delete Icon Button */
+.header-actions .btn-delete,
+.header-actions button[color="warn"] {
+  color: var(--blushed-brick) !important;
+  opacity: 1 !important;
+}
+
+/* Optional: Subtle background glow on hover for the icons */
+.header-actions button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* --- 9. ANIMATIONS --- */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .fade-slide-in {
-  animation: fadeSlideIn 0.35s ease-out forwards;
-}
-
-/* fade‑slide out */
-.fade-slide-out {
-  animation: fadeSlideOut 0.3s ease-in forwards;
+  animation: fadeSlideIn 0.3s ease-out forwards;
 }
 
 @keyframes fadeSlideIn {
   from {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateX(20px);
   }
   to {
     opacity: 1;
     transform: translateX(0);
-  }
-}
-
-@keyframes fadeSlideOut {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-}
-
-/* Bottom Actions */
-.form-actions {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  padding-bottom: 4rem;
-}
-
-.big-btn {
-  padding: 1rem 2rem !important;
-  border-radius: 12px !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-}
-
-.submit-btn {
-  background-color: #ec4899 !important; /* Pink pop */
-  color: white !important;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }

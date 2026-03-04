@@ -7,18 +7,23 @@
     </div>
 
     <div class="header-actions">
-      <!-- Search Bar (UX Win) -->
       <div class="search-box">
         <span class="material-icons">search</span>
         <input type="text" placeholder="Search courses..." (input)="onSearch($event)" />
       </div>
 
       @if (isInstructor) {
-        <button mat-flat-button class="create-btn" [routerLink]="['/create-course']">
-          <span class="material-icons">add</span>
-          Create New Course
-        </button>
+      <button mat-flat-button class="create-btn" [routerLink]="['/create-course']">
+        <span class="material-icons">add</span>
+        Create New Course
+      </button>
       }
+
+      <!-- Updated Logout Button -->
+      <button mat-stroked-button class="logout-btn" (click)="logout()">
+        <span class="material-icons">logout</span>
+        Logout
+      </button>
     </div>
   </header>
 
@@ -29,47 +34,70 @@
       <!-- SECTION 1: INSTRUCTOR AREA -->
       <!-- ============================= -->
       @if (isInstructor) {
-        <section class="management-section">
-          <div class="section-header">
-            <h2>My Created Courses</h2>
-          </div>
-          @if (myCourses.length > 0) {
-            <div class="courses-grid">
-              @for (course of myCourses; track course) {
-                <mat-card
-                  class="course-card glass-effect"
-                  [routerLink]="['/courses', course.courseId]"
-                  >
-                  <mat-card-header>
-                    <mat-card-title>{{ course.courseName }}</mat-card-title>
-                  </mat-card-header>
-                  <mat-card-actions class="card-footer">
-                    <button
-                      mat-icon-button
-                      color="primary"
-                      [routerLink]="['/courses/edit', course.courseId]"
-                      (click)="$event.stopPropagation()"
-                      >
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <app-delete-button
-                      (click)="$event.stopPropagation()"
-                      [confirmMessage]="'Delete ' + course.courseName + '?'"
-                      [deleteFn]="getDeleteFn(course.courseId!)"
-                      (deleted)="removeCourseFromList(course.courseId!)"
-                      >
-                    </app-delete-button>
-                  </mat-card-actions>
-                </mat-card>
-              }
-            </div>
-          } @else {
-            <div class="empty-state small">
-              <mat-icon>school</mat-icon>
-              <p>You haven’t created any courses yet.</p>
-            </div>
+      <section class="management-section">
+        <div class="section-header">
+          <h2>My Created Courses</h2>
+        </div>
+        @if (myCourses.length > 0) {
+        <div class="courses-grid">
+          @for (course of myCourses; track course) {
+          <mat-card class="course-card glass-effect" [routerLink]="['/courses', course.courseId]">
+            <mat-card-header>
+              <mat-card-title>{{ course.courseName }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-actions class="card-footer">
+              <button
+                mat-icon-button
+                color="primary"
+                [routerLink]="['/courses', course.courseId, 'edit']"
+                (click)="$event.stopPropagation()"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <app-delete-button
+                (click)="$event.stopPropagation()"
+                [confirmMessage]="'Delete ' + course.courseName + '?'"
+                [deleteFn]="getDeleteFn(course.courseId!)"
+                (deleted)="removeCourseFromList(course.courseId!)"
+              >
+              </app-delete-button>
+            </mat-card-actions>
+          </mat-card>
           }
-        </section>
+        </div>
+        } @else {
+        <div class="empty-state small">
+          <mat-icon>school</mat-icon>
+          <p>You haven’t created any courses yet.</p>
+        </div>
+        }
+      </section>
+      } @if ( !isInstructor && enrolledProgress.length > 0 ) {
+      <section class="learning-section">
+        <div class="section-header">
+          <h2>Continue Learning</h2>
+          <p>Track your progress and pick up where you left off.</p>
+        </div>
+
+        <div class="progress-grid">
+          @for ( item of enrolledProgress; track item ) {
+          <div class="progress-card">
+            <div class="card-info">
+              <h4>{{ item.courseName }}</h4>
+              <span class="lesson-count">{{ item.completedLessons }}/{{ item.totalLessons }} Lessons</span>
+            </div>
+
+            <!-- Angular Material Progress Bar -->
+            <mat-progress-bar mode="determinate" [value]="item.progressPercentage"></mat-progress-bar>
+
+            <div class="card-footer">
+              <span class="percent-text">{{ item.progressPercentage }}% Complete</span>
+              <button mat-button color="primary" [routerLink]="['/courses', item.courseId]">Continue</button>
+            </div>
+          </div>
+          }
+        </div>
+      </section>
       }
 
       <!-- ============================= -->
@@ -81,32 +109,28 @@
         </div>
 
         @if (allCourses!.length > 0) {
-          <div class="courses-grid">
-            @for (course of allCourses; track course) {
-              <mat-card
-                class="course-card glass-effect hoverable"
-                [routerLink]="['/courses', course.courseId]"
-                >
-                <div class="card-image-placeholder">
-                  <mat-icon>import_contacts</mat-icon>
-                </div>
-                <mat-card-header>
-                  <mat-card-title>{{ course.courseName }}</mat-card-title>
-                  <!--<mat-card-subtitle> Instructor: {{ course.instructor.username }} </mat-card-subtitle>-->
-                </mat-card-header>
-              </mat-card>
-            }
-          </div>
-        } @else {
-          <div class="empty-state">
-            <div class="empty-icon-circle">
+        <div class="courses-grid">
+          @for (course of allCourses; track course) {
+          <mat-card class="course-card glass-effect hoverable" [routerLink]="['/courses', course.courseId]">
+            <div class="card-image-placeholder">
               <mat-icon>import_contacts</mat-icon>
             </div>
-            <h3>No courses available</h3>
-            <p>Check back later for new content.</p>
+            <mat-card-header>
+              <mat-card-title>{{ course.courseName }}</mat-card-title>
+              <!--<mat-card-subtitle> Instructor: {{ course.instructor.username }} </mat-card-subtitle>-->
+            </mat-card-header>
+          </mat-card>
+          }
+        </div>
+        } @else {
+        <div class="empty-state">
+          <div class="empty-icon-circle">
+            <mat-icon>import_contacts</mat-icon>
           </div>
+          <h3>No courses available</h3>
+          <p>Check back later for new content.</p>
+        </div>
         }
-
       </section>
     </div>
   </main>

@@ -35,6 +35,9 @@ public class Section {
     @Column(nullable = false)
     private String title;
 
+    @Column
+    private String description;
+
     @Column(name = "order_index")
     private Integer orderIndex;
 
