@@ -1,27 +1,24 @@
 package com.learn.lms.service;
 
+import com.learn.lms.dto.UserDTO;
 import com.learn.lms.model.Role;
 import com.learn.lms.model.RoleType;
 import com.learn.lms.model.User;
-import com.learn.lms.model.UserDTO;
 import com.learn.lms.repository.RoleRepository;
 import com.learn.lms.repository.UserRepository;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-
-    // @Autowired
-    // public UserRepository userRepository;
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -43,7 +40,7 @@ public class UserService {
         });
 
         user.setUsername(userDTO.getUsername());
-        user.setPassword(userDTO.getPassword());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setEmail(userDTO.getEmail());
 
         RoleType roleType = RoleType.valueOf(userDTO.getRole().toUpperCase());

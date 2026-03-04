@@ -1,25 +1,22 @@
 package com.learn.lms.controller;
 
+import com.learn.lms.dto.UserDTO;
+import com.learn.lms.model.User;
+import com.learn.lms.service.UserService;
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.learn.lms.model.User;
-import com.learn.lms.model.UserDTO;
-import com.learn.lms.service.UserService;
-
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users")
-
 public class UserController {
+
     // @Autowired
     // private UserService userService;
 
@@ -47,6 +44,5 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
-
     }
 }

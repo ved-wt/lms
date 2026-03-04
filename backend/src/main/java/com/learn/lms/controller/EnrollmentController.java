@@ -4,6 +4,7 @@ import com.learn.lms.model.Enrollment;
 import com.learn.lms.model.User;
 import com.learn.lms.repository.UserRepository;
 import com.learn.lms.service.EnrollmentService;
+import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

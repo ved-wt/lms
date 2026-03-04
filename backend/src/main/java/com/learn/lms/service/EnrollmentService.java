@@ -1,5 +1,6 @@
 package com.learn.lms.service;
 
+import com.learn.lms.dto.CourseProgressDTO;
 import com.learn.lms.model.Course;
 import com.learn.lms.model.Enrollment;
 import com.learn.lms.model.EnrollmentStatus;
@@ -70,5 +71,9 @@ public class EnrollmentService {
 
     public Optional<Enrollment> getEnrollmentByUser_IdAndCourse_CourseId(Long userId, Long courseId) {
         return enrollmentRepository.findByUser_IdAndCourse_CourseId(userId, courseId);
+    }
+
+    public List<CourseProgressDTO> getProgressForUser(long userId) {
+        return enrollmentRepository.getProgressForUser(userId);
     }
 }

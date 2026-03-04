@@ -1,7 +1,7 @@
 package com.learn.lms.service;
 
 import com.learn.lms.config.JwtUtils;
-import com.learn.lms.model.AuthResponse;
+import com.learn.lms.dto.AuthResponse;
 import com.learn.lms.model.Role;
 import com.learn.lms.model.RoleType;
 import com.learn.lms.model.User;

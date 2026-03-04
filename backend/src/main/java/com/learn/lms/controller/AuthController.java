@@ -1,6 +1,6 @@
 package com.learn.lms.controller;
 
-import com.learn.lms.model.AuthResponse;
+import com.learn.lms.dto.AuthResponse;
 import com.learn.lms.service.AuthService;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;

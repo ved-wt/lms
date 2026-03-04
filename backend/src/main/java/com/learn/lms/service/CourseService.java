@@ -11,6 +11,7 @@ import com.learn.lms.repository.LessonProgressRepository;
 import com.learn.lms.repository.LessonRepository;
 import com.learn.lms.repository.SectionRepository;
 import com.learn.lms.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class CourseService {
 
     private final CourseRepository courseRepository;
